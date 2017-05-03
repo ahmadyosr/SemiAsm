@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% load asm_tags %}
+<html>
+<head>
+<style> 
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+    resize: none;
+}
+</style>
+</head>
+<body>
+<div style="max-width:600px;margin:auto;">
+<p> Write x86 Assembly code below:</p>
+
+<form method="POST" action="/editor/" >
+  <textarea name="text" >{% for line in lines %}{{line}}&#13;&#10;{% endfor %}</textarea>
+  {% csrf_token %}
+  <input type="submit" value="run">
+</form>
+
+<div>
+<p> Registers Status </p>
+
+<textarea readonly style="background-color:#DCDCDC;">{% if ax %}
+ax:{{ax|hexing|upper }}h	bx:{{ bx|hexing|upper }}h	cx:{{cx|hexing|upper }}h    	dx:{{dx|hexing|upper }}h
+{% endif %}</textarea>
+</div>
+
+	
+</div>
+</html>
+</body>
