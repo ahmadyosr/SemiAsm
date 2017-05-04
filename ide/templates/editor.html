@@ -29,8 +29,9 @@ textarea {
 <div>
 <p> Registers Status </p>
 
-<textarea readonly style="background-color:#DCDCDC;">{% if ax %}
+<textarea readonly style="background-color:#DCDCDC;">{% if lines %}
 ax:{{ax|hexing|upper }}h	bx:{{ bx|hexing|upper }}h	cx:{{cx|hexing|upper }}h    	dx:{{dx|hexing|upper }}h
+carry flag : {{carry_flag}}
 {% endif %}</textarea>
 </div>
 

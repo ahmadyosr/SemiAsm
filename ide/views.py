@@ -19,47 +19,59 @@ def compiling(request,lines):
 	operations = ('mov','add' ,'sub','shl','shr')
 	for line in lines : 
 		line = line.split()
-		if line[0]=='mov':											# first arg is reg16
+		cmd = line[0]
+		op1 = line[1]
+		op2 = line[3]
+		
+		if cmd =='mov':											# first arg is reg16
 			try : 
-				dict[line[1]] = int(line[3])						#wil get exception if its a reg literal
+				dict[op1] = int(op2)						#wil get exception if its a reg literal
 			except ValueError: 
-				dict[line[1]] = int(dict[line[3]])
-
-		elif line[0]=='add':
+				dict[op1] = int(dict[op2])
+		elif cmd =='add':
 			try :
-				dict[line[1]] += int(line[3])
+				dict[op1] += int(op2)
 			except: 
-				dict[line[1]] += int(dict[line[3]])
-		elif line[0]=='sub':
+				dict[op1] += int(dict[op2])
+		elif cmd =='sub':
 			try :
-				dict[line[1]] -= int(line[3])
+				dict[op1] -= int(op2)
 			except: 
-				dict[line[1]] -= int(dict[line[3]])
-		elif line[0]=='shr':
+				dict[op1] -= int(dict[op2])
+		elif cmd =='shr':
 			try:
-				dict[line[1]] /= int(line[3])*2
+				dict[op1] /= (int(op2)*2)
 			except: 
-				dict[line[1]] /= int(dict[line[3]])*2
-		elif line[0]=='shl':
+				dict[op1] /= int(dict[op2])*2
+		elif cmd =='shl':
 			try:
-				dict[line[1]] *= int(line[3])*2
+				dict[op1] *= int(op2)*2
 			except: 
-				dict[line[1]] *= int(dict[line[3]])*2
-		elif line[0]=='mul':
+				dict[op1] *= int(dict[op2])*2
+		elif cmd =='mul':
 			try:
-				dict['ax'] *= int(line[1])
+				dict['ax'] *= int(op1)
 			except:
-				dict['ax'] *= int(dict[line[1]])
-			#comment here 
+				dict['ax'] *= int(dict[op1])
 			bin_ax = bin(dict['ax'])
 			bin_ax = int(bin_ax[2:])
 			dict['dx'] = int(str(bin_ax / 10000000000000000),2) #16bit
 			dict['ax'] = int(str(bin_ax % 10000000000000000),2)
-			
-		ax = dict['ax']												
+		
+		if dict[op1] > 65535 or dict[op1] < 0 :
+			dict['carry_flag'] = 1 
+		else :
+			dict['carry_flag'] = 0 
+		if dict[op1] > 53248 or dict[op1] < 0 : 
+			dict['sign_flag'] = 1
+		else :
+			dict['sign_flag'] = 0 
+		ax = dict['ax']	
 		bx = dict['bx']
 		cx = dict['cx']
-		dx = dict['dx']	
+		dx = dict['dx']
+		print ax ,bx,cx,dx
 		print "{0:#b},{1:#b} ,{2:#b}, {3:#b} ".format(ax,bx,cx,dx)
+		
 	dict['lines']=lines	
 	return  render(request,'editor.html',dict)
