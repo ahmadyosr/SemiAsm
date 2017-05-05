@@ -8,56 +8,44 @@ def editor(request, *args):
 		lines = request.POST['text'].splitlines()
 		return compiling(request, lines)
 	return render(request,'editor.html')
-def compiling(request,lines):
-	ax = 0 #0
-	bx = 0 #1
-	cx = 0 #2
-	dx = 0 #3
 
+def compiling(request,lines):		
 	dict ={'ax':0 , 'bx':0, 'cx':0 , 'dx':0 }
 	regs = ('ax','bx','cx','dx')
 	operations = ('mov','add' ,'sub','shl','shr')
+	
+	def process(cmd , op2):
+			if cmd =='mov':											# first arg is reg16
+				dict[op1] = op2						#wil get exception if its a reg literal
+			elif cmd =='add':
+				dict[op1] += op2
+			elif cmd =='sub':
+				dict[op1] -= op2
+			elif cmd =='shr':
+				dict[op1] /= (op2*2)
+			elif cmd =='shl':
+				dict[op1] *= op2*2
+			elif cmd =='mul':
+				dict['ax'] *= int(op1)
+				bin_ax = bin(dict['ax'])
+				bin_ax = int(bin_ax[2:])
+				dict['dx'] = int(str(bin_ax / 10000000000000000),2) #16bit
+				dict['ax'] = int(str(bin_ax % 10000000000000000),2)
+					
 	for line in lines : 
 		line = line.split()
 		cmd = line[0]
 		op1 = line[1]
 		op2 = line[3]
+		try : 
+			op2 = int(op2)
+			process(cmd , op2)
+		except ValueError : 
+			op2 = int(dict[op2])
+			process(cmd , op2)
+			
 		
-		if cmd =='mov':											# first arg is reg16
-			try : 
-				dict[op1] = int(op2)						#wil get exception if its a reg literal
-			except ValueError: 
-				dict[op1] = int(dict[op2])
-		elif cmd =='add':
-			try :
-				dict[op1] += int(op2)
-			except: 
-				dict[op1] += int(dict[op2])
-		elif cmd =='sub':
-			try :
-				dict[op1] -= int(op2)
-			except: 
-				dict[op1] -= int(dict[op2])
-		elif cmd =='shr':
-			try:
-				dict[op1] /= (int(op2)*2)
-			except: 
-				dict[op1] /= int(dict[op2])*2
-		elif cmd =='shl':
-			try:
-				dict[op1] *= int(op2)*2
-			except: 
-				dict[op1] *= int(dict[op2])*2
-		elif cmd =='mul':
-			try:
-				dict['ax'] *= int(op1)
-			except:
-				dict['ax'] *= int(dict[op1])
-			bin_ax = bin(dict['ax'])
-			bin_ax = int(bin_ax[2:])
-			dict['dx'] = int(str(bin_ax / 10000000000000000),2) #16bit
-			dict['ax'] = int(str(bin_ax % 10000000000000000),2)
-		
+
 		if dict[op1] > 65535 or dict[op1] < 0 :
 			dict['carry_flag'] = 1 
 		else :
@@ -69,9 +57,6 @@ def compiling(request,lines):
 		ax = dict['ax']	
 		bx = dict['bx']
 		cx = dict['cx']
-		dx = dict['dx']
-		print ax ,bx,cx,dx
-		print "{0:#b},{1:#b} ,{2:#b}, {3:#b} ".format(ax,bx,cx,dx)
-		
+		dx = dict['dx']		
 	dict['lines']=lines	
 	return  render(request,'editor.html',dict)

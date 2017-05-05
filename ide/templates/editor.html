@@ -2,10 +2,11 @@
 {% load asm_tags %}
 <html>
 <head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <style> 
 textarea {
     width: 100%;
-    height: 150px;
+    height: 460px;
     padding: 12px 20px;
     box-sizing: border-box;
     border: 2px solid #ccc;
@@ -17,25 +18,43 @@ textarea {
 </style>
 </head>
 <body>
-<div style="max-width:600px;margin:auto;">
-<p> Write x86 Assembly code below:</p>
-
-<form method="POST" action="/editor/" >
+<div class="container">
+<h1>SemiAssembly Emulator</h1>
+</div>
+<div class="container-fluid" style="margin-top:30px;">
+<div class="col-sm-8">
+<p> Write an Assembly x86 code below:</p>
+<form method="POST" action="/" >
   <textarea name="text" >{% for line in lines %}{{line}}&#13;&#10;{% endfor %}</textarea>
   {% csrf_token %}
-  <input type="submit" value="run">
+  <input class="btn btn-primary" type="submit" value="run">
 </form>
-
+</div>
+<div class="col-sm-4">
 <div>
 <p> Registers Status </p>
-
-<textarea readonly style="background-color:#DCDCDC;">{% if lines %}
-ax:{{ax|hexing|upper }}h	bx:{{ bx|hexing|upper }}h	cx:{{cx|hexing|upper }}h    	dx:{{dx|hexing|upper }}h
+<textarea readonly style="background-color:#DCDCDC;max-height:270px;">{% if lines %}
+ax:{{ax|hexing|upper }}h	
+bx:{{ bx|hexing|upper }}h	
+cx:{{cx|hexing|upper }}h    	
+dx:{{dx|hexing|upper }}h
 carry flag : {{carry_flag}}
+sign flag : {{sign_flag}}
 {% endif %}</textarea>
 </div>
 
-	
+<div style="max-height:100px;" >
+<h1>Notes</h1>
+</h2>- second operand should always be either a 16 register or a decimal integer   </h2></br>
+</h2>- Only 16 bit registers allowed</h2></br>
+</h2>- functions included : mov , add , sub , shr , shl , mul </h2></br>
+</h2>- tracked flages : carry flag , sign flag   </h2></br>
+</h2>- first operand should always be a 16bit register    </h2></br>
 </div>
+</div>
+
+</div>
+
+
 </html>
 </body>

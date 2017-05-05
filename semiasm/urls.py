@@ -6,6 +6,6 @@ urlpatterns = [
     # Examples:
     # url(r'^$', 'semiasm.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-    url(r'^editor/$',views.editor,name="editor"),
+    url(r'^$',views.editor,name="editor"),
     url(r'^admin/', include(admin.site.urls)),
 ]
